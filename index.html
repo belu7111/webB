@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Termékrendelés</title>
+  <style>
+    /* reset + box-sizing */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: rgb(228, 185, 91);
+      font-family: Arial, sans-serif;
+    }
+
+    /* szerzőnév réteg (ha kell) */
+    #author {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 4px 8px;
+      background-color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    /* központi keret */
+    .container {
+      max-width: 900px;
+      margin: 60px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* címek */
+    h1 {
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    h2 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-weight: normal;
+      font-size: 1.2rem;
+    }
+
+    /* kétoszlopos layout */
+    .order-wrapper {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    /* űrlap mezők */
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .form-row label {
+      width: 70px;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .form-row input[type="text"],
+    .form-row input[type="email"] {
+      width: 200px;
+      padding: 4px;
+    }
+    .form-row input[type="number"] {
+      width: 60px;
+      padding: 4px;
+    }
+    .form-row select {
+      width: 150px;
+      padding: 4px;
+    }
+
+    /* küldés gomb */
+    button {
+      padding: 6px 12px;
+      align-self: flex-start;
+      cursor: pointer;
+    }
+
+    /* termékkép */
+    .product-image img {
+      max-width: 400px;
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Neved+Neptunod, ha kell -->
+  <div id="author">Név: Kovács Béla &nbsp;&nbsp; Neptun: ABC123</div>
+
+  <div class="container">
+    <h1>Termékrendelés</h1>
+    <h2>Termék – Laptop-01</h2>
+
+    <div class="order-wrapper">
+      <form id="orderForm" action="feldolgoz.php" method="POST" novalidate>
+        <div class="form-row">
+          <label for="name">Név:</label>
+          <input type="text" id="name" name="name" required minlength="8" maxlength="30">
+        </div>
+        <div class="form-row">
+          <label for="email">E-mail:</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-row">
+          <label for="darab">Darab:</label>
+          <input type="number" id="darab" name="darab" required min="1" max="10">
+        </div>
+        <div class="form-row">
+          <label for="nap">Nap:</label>
+          <select id="nap" name="nap" required>
+            <option value="">Válasszon!</option>
+            <option value="hétfő">hétfő</option>
+            <option value="kedd">kedd</option>
+            <option value="szerda">szerda</option>
+            <option value="csütörtök">csütörtök</option>
+            <option value="péntek">péntek</option>
+          </select>
+        </div>
+        <button type="submit">Küldés</button>
+      </form>
+
+      <div class="product-image">
+        <img src="kep.jpg" alt="Laptop-01 kép">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+      var valid = true;
+      ['name','email','darab','nap'].forEach(function(id){
+        document.getElementById(id).style.backgroundColor = '';
+      });
+
+      // 1) Név: 8–30 karakter
+      var name = document.getElementById('name');
+      if (name.value.length < 8 || name.value.length > 30) {
+        valid = false;
+        name.style.backgroundColor = '#f99';
+      }
+
+      // 2) E-mail
+      var email = document.getElementById('email');
+      var checkPattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+      if (!checkPattern.test(email.value)) {
+        valid = false;
+        email.style.backgroundColor = '#f99';
+      }
+
+      // 3) Darab: 1–10
+      var darab = document.getElementById('darab');
+      var num = parseInt(darab.value, 10);
+      if (isNaN(num) || num < 1 || num > 10) {
+        valid = false;
+        darab.style.backgroundColor = '#f99';
+      }
+
+      // 4) Nap kiválasztva?
+      var nap = document.getElementById('nap');
+      if (nap.value === '') {
+        valid = false;
+        nap.style.backgroundColor = '#f99';
+      }
+
+      if (!valid) e.preventDefault();
+    });
+  </script>
+</body>
+</html>
